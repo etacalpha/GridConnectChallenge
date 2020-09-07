@@ -9,7 +9,7 @@ const AWS = require("aws-sdk");
 const dynamo = new AWS.DynamoDB.DocumentClient({ region: "us-east-1" });
 
 /**
- * A simple example includes a HTTP get method to get one item by id from a DynamoDB table.
+ * A simple example includes a HTTP put method to add attribute accessedValue
  */
 exports.lambdaHandler = async (event, context) => {
   if (event.httpMethod !== "PUT") {
