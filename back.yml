@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  grid-back
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+      AllowMethods: "'GET,PUT,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+
+
+Resources:
+  GridLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: dynamodbAccessRole
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: !GetAtt DynamoDB.Arn
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: "arn:aws:logs:*:*:*"
+
+  DynamoDB:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: WebsiteViews
+      PrimaryKey:
+        Name: website
+        Type: String
+
+  updateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_function.lambdaHandler
+      CodeUri: ./Lambdas/update/
+      Runtime: nodejs12.x
+      Role: !GetAtt GridLambdaRole.Arn
+      MemorySize: 128
+      Timeout: 30
+      Description: Preforms update on dynamo item returns accessedValue from dynamo table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDB
+      Environment:
+        Variables:
+          TABLE: !Ref DynamoDB
+          WEBSITE: grid
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: PUT

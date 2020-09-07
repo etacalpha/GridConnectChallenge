@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  grid
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Resources:
+
+  GridFront:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./front.yml
+
+  GridBack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./back.yml
