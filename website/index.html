@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>GridConnect-Challenge</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./website.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to the challenge answer!</h1>
+      <h2>Views: <span id="views"></span></h2>
+    </header>
+    <main>
+      <section id="description">
+        <div class="standard">
+          <h2>
+            Object:
+            <span
+              >Create a website that connects to a database and displays the
+              number of web page views.</span
+            >
+          </h2>
+          <h2>
+            Constraints:
+            <span>Use IaC for creation without using AWS console</span>
+          </h2>
+          <h2>
+            Bonus: <span>Make website https accessible with custom domain</span>
+          </h2>
+        </div>
+      </section>
+      <section id="execution">
+        <h2>Execution</h2>
+        <p>In order to complete this challenge I started with the backend. I created a Sam template "back.yml" that
+        created a Lambda execution role specific for this challenge, a dynamo table, a lambda function, and an API
+        with one resource. Then I created a nodejs12.x lambda function that uses the aws-sdk, DynamoDB DocClient.
+        This function uses the update api which allows me to add an attribute to an item or increment an item
+        attribute that has a number value. This function is tested with Jest. The test will pass only on the first
+        iteraation unless the tester manually changes the expected return value as the function changes the value
+        with every call.  </p>
+        <p>For the website I needed to use Https and a cusotm domain name. So I created another template "font.yml"
+        that adds a s3 bucket, bucket policy, tls certificate, cloudfront distribution, route 53 hosted
+        zone(indirectly) and a record set group. Next I created a third template that calls the previous templates in
+        order to create my stack.</p>
+        <p>The only thing left to do was to add the static site to the website bucket. I initially planned to create
+        a code pipeline from github but utimetly decided that since there really is no build and not test that using
+        the aws cli would be as effective and quicker.</p>
+      </section>
+    </main>
+    <footer>
+      <p>This page created by Steven Beard in response to a coding challenge</p>
+    </footer>
+    <script src="./website.js" async defer></script>
+  </body>
+</html>
